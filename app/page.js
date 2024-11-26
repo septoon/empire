@@ -2,20 +2,28 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)] text-white">
-      <header className="flex flex-col items-center">
+    <div className="flex flex-col items-center min-h-screen font-[family-name:var(--font-geist-sans)] text-white font-comfortaa">
+      <header className="w-full flex justify-between items-center px-4">
         <Image
           src="/logo.png"
           alt="Логотип Империи сияния"
-          width={180}
-          height={180}
+          width={60}
+          height={60}
           priority
         />
-        <h1 className="text-5xl mt-4 font-bold text-pink-500 drop-shadow-lg">
-          Добро пожаловать в «Империю сияния»
+        <h1 className="text-2xl  text-white">
+         Империя сияния
         </h1>
       </header>
       <main className="flex flex-col gap-8 items-center sm:items-start">
+        <div className="w-full flex flex-col justify-between p-8 h-[500px] bg-main bg-cover bg-no-repeat bg-center">
+          <h2 className="text-5xl drop-shadow-lg">Лазерная эпиляция всего тела</h2>
+          <div className="flex">
+          <p className="text-5xl font-bold drop-shadow-lg">3990 ₽/ </p>
+          <p className="text-2xl drop-shadow-lg"><s>9990 ₽</s></p>
+          </div>
+          <button className="w-full py-2 text-xl font-bold bg-primary rounded-lg ">Записаться</button>
+        </div>
         <p className="text-center sm:text-left text-lg">
           Мы предлагаем широкий спектр услуг для вашей красоты и здоровья.
         </p>
