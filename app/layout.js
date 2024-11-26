@@ -14,7 +14,7 @@ const geistMono = localFont({
 
 export const metadata = {
   title: "Империя сияния",
-  description: "Салон красоты «Империя сияния»",
+  description: "Студия красоты «Империя сияния»",
 };
 
 export default function RootLayout({ children }) {
