@@ -1,3 +1,4 @@
+import { Providers } from "./GlobalRedux/provider";
 import "./globals.css";
 
 export const metadata = {
@@ -40,7 +41,9 @@ export default function RootLayout({ children }) {
       <body
         className='antialiased bg-gradient-to-r from-pink-300  via-purple-300 to-indigo-400'
       >
-        {children}
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );

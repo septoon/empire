@@ -7,6 +7,20 @@ module.exports = {
   ],
   theme: {
     extend: {
+      animation: {
+        scan: 'scan 2s linear infinite',
+        pulse: 'pulse 1.5s ease-in-out infinite',
+      },
+      keyframes: {
+        scan: {
+          '0%': { top: '0%' },
+          '100%': { top: '100%' },
+        },
+        pulse: {
+          '0%, 100%': { opacity: 0.3 },
+          '50%': { opacity: 0.7 },
+        },
+      },
       backgroundImage: {
         'main': "url('/main.webp')",
       },
