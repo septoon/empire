@@ -8,7 +8,16 @@ export const fetchServices = createAsyncThunk(
       const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/services.json`);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      // Логирование ошибки для отладки
+      console.error('Ошибка при выполнении запроса:', error);
+
+      // Безопасное получение сообщения об ошибке
+      const message =
+        (error.response && error.response.data && error.response.data.message) ||
+        error.message ||
+        'Ошибка при загрузке данных';
+
+      return rejectWithValue(message);
     }
   }
 );
