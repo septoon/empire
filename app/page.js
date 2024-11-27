@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Services from "./components/Services";
+import DialogForm from "./components/DialogForm";
 
 export default function Home() {
   return (
@@ -25,18 +26,13 @@ export default function Home() {
           <p className="text-5xl font-bold drop-shadow-lg">3990 ₽/ </p>
           <p className="text-2xl drop-shadow-lg"><s>9990 ₽</s></p>
           </div>
-          <button className="w-full py-2 text-xl font-bold bg-primary rounded-lg ">Записаться</button>
+        <DialogForm />
         </div>
         <p className="text-center sm:text-left text-lg">
           Мы предлагаем широкий спектр услуг для вашей красоты и здоровья.
         </p>
         <Services />
-        <a
-          className="mt-8 bg-pink-500 hover:bg-pink-600 text-white font-semibold py-3 px-6 rounded-full transition duration-300 shadow-lg transform hover:scale-105"
-          href="/contact"
-        >
-          Связаться с нами
-        </a>
+        <DialogForm />
       </main>
       <footer className="flex gap-6 flex-wrap items-center justify-center mt-16">
         <p>© 2023 Империя сияния</p>

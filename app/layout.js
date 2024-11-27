@@ -1,5 +1,9 @@
+import { PrimeReactProvider } from 'primereact/api';
 import { Providers } from "./GlobalRedux/provider";
+
 import "./globals.css";
+import 'primereact/resources/themes/lara-light-cyan/theme.css';
+
 
 export const metadata = {
   title: "Империя сияния",
@@ -42,7 +46,9 @@ export default function RootLayout({ children }) {
         className='antialiased bg-gradient-to-r from-pink-300  via-purple-300 to-indigo-400'
       >
         <Providers>
+        <PrimeReactProvider>
           {children}
+          </PrimeReactProvider>
         </Providers>
       </body>
     </html>
