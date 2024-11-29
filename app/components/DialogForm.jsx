@@ -1,36 +1,67 @@
 'use client'
 
+import { Modal, Button, InputBase, Textarea } from '@mantine/core';
+import { IMaskInput } from 'react-imask';
+import { useDispatch, useSelector } from 'react-redux';
+import { closeModal, openModal } from '../GlobalRedux/Features/modal/modalSlice';
+import SelectServices from './SelectServices';
+import { DateTimePicker } from '@mantine/dates';
+import 'dayjs/locale/ru';
 
-import React, { useState } from "react";
-import { Dialog } from 'primereact/dialog';
-import { Button } from 'primereact/button';
-import SelectServices from "./SelectServices";
+function DialogForm() {
+    const dispatch = useDispatch();
+    const isModalOpen = useSelector((state) => state.modal.isOpen);
 
-export default function DialogForm() {
-    const [visible, setVisible] = useState(false);
-    const [position, setPosition] = useState('center');
-    const footerContent = (
-        <div>
-            <button className="w-full py-2 text-xl font-bold bg-primary text-white rounded-lg" onClick={() => setVisible(false)}>Отправить</button>
-        </div>
-    );
-
-    const show = (position) => {
-        setPosition(position);
-        setVisible(true);
+    const handleOpen = () => {
+        dispatch(openModal());
+      };
+    const handleClose = () => {
+      dispatch(closeModal());
     };
 
-    return (
-        <div className="">
-            <button className="w-full py-2 px-4 text-xl font-bold bg-primary rounded-lg" onClick={() => show('bottom')}>Записаться</button>
-            <Dialog header="Запись" visible={visible} position={position} style={{ width: '100vw' }} onHide={() => {if (!visible) return; setVisible(false); }} footer={footerContent} draggable={false} resizable={false}>
-                <h1 className="mb-2">Выберите услугу:</h1>
-                <SelectServices />
-                <h1 className="my-6">Выберите дату:</h1>
-                <h1 className="mb-2">Ваш номер:</h1>
-
-            </Dialog>
-        </div>
-    )
-}
+  return (
+    <>
+      <Modal
+        opened={isModalOpen}
+        onClose={handleClose}
+        title="Записаться на приём"
+      >
+        <form>
+          <InputBase
+            label="Ваше имя"
+            placeholder="Введите ваше имя"
+            required
+            mb="md"
+          />
+          <InputBase
+            label="Номер телефона"
+            component={IMaskInput}
+            mask="+7 (000) 000-00-00"
+            placeholder="Введите номер телефона"
+            required
+            mb="md"
+          />
+          <DateTimePicker
+            valueFormat="DD MMM YYYY HH:mm"
+            locale='ru'
+            label="Дата и время"
+            minDate={new Date()} 
+            // value={new Date()}
+            placeholder="Выберите дату и время"
+            />
+          <SelectServices />
+          <Textarea
+            label="Комментарий"
+            placeholder="Дополнительная информация"
+            mb="md"
+          />
+          <Button type="submit" onClick={handleOpen}>Отправить</Button>
+        </form>
+      </Modal>
+      <button className="w-full py-2 text-xl font-bold bg-tahiti text-white rounded-lg" onClick={handleOpen}>Заисаться</button>
         
+    </>
+  );
+}
+
+export default DialogForm;

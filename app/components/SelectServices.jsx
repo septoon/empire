@@ -1,40 +1,42 @@
-'use client'
-
 import React, { useState, useEffect } from 'react';
-import { TreeSelect } from 'primereact/treeselect';
-import { useSelector } from 'react-redux';
+import { MultiSelect } from '@mantine/core';
 
 export default function SelectServices() {
-  const [nodes, setNodes] = useState([]);
-  const [selectedNodeKeys, setSelectedNodeKeys] = useState(null);
-  const { data } = useSelector((state) => state.services);
+  const [selectedServices, setSelectedServices] = useState([]);
+  const [serviceOptions, setServiceOptions] = useState([]);
 
   useEffect(() => {
-    if (data.length > 0) {
-      const formattedData = data.map((category, catIndex) => ({
-        key: `cat_${catIndex}`,
-        label: category.category,
-        children: category.items.map((item, itemIndex) => ({
-          key: `cat_${catIndex}_item_${itemIndex}`,
-          label: `${item.name} - ${item.price}₽`,
-          data: item
+    // Пример данных для услуг
+    const data = [
+      { category: 'Эпиляция', items: [{ name: 'Лицо', price: 300 }, { name: 'Ноги', price: 500 }] },
+    ];
+
+    if (data && Array.isArray(data) && data.length > 0) {
+      const options = data.flatMap((category) =>
+        category.items.map((item) => ({
+          value: item.name,
+          label: `${category.category} – ${item.name} (${item.price}₽)`,
         }))
-      }));
-      setNodes(formattedData);
+      );
+      setServiceOptions(options);
     }
-  }, [data]);
+  }, []);
 
   return (
-    <div className="card flex justify-content-center">
-      <TreeSelect
-        value={selectedNodeKeys}
-        onChange={(e) => setSelectedNodeKeys(e.value)}
-        options={nodes}
-        metaKeySelection={false}
-        className="md:w-20rem w-full"
-        selectionMode="multiple"
-        placeholder="Выбрать"
-      />
-    </div>
+    <MultiSelect
+  label="Услуги"
+  placeholder="Выберите услуги"
+  data={serviceOptions}
+  value={selectedServices}
+  onChange={setSelectedServices}
+  searchable
+  nothingFound={<span>Услуги не найдены</span>}
+  clearable
+  required
+  classNames={{
+    dropdown: 'max-h-[300px] overflow-y-auto',
+  }}
+  mb="md"
+/>
   );
 }

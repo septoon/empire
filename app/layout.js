@@ -1,8 +1,9 @@
-import { PrimeReactProvider } from 'primereact/api';
 import { Providers } from "./GlobalRedux/provider";
 
 import "./globals.css";
-import 'primereact/resources/themes/lara-light-cyan/theme.css';
+import '@mantine/core/styles.css';
+import '@mantine/dates/styles.css';
+import { MantineProvider } from '@mantine/core';
 
 
 export const metadata = {
@@ -35,7 +36,7 @@ export default function RootLayout({ children }) {
             dangerouslySetInnerHTML={{
               __html: `
                 const style = document.createElement('style')
-                style.innerHTML = '@layer tailwind-base, primereact, tailwind-utilities;'
+                style.innerHTML = '@layer tailwind-base, tailwind-utilities;'
                 style.setAttribute('type', 'text/css')
                 document.querySelector('head').prepend(style)
               `,
@@ -43,12 +44,12 @@ export default function RootLayout({ children }) {
           />
       </head>
       <body
-        className='antialiased bg-gradient-to-r from-pink-300  via-purple-300 to-indigo-400'
+        className='antialiased bg-gradient-to-r from-mainBgStart  via-mainBgMiddle to-mainBg'
       >
         <Providers>
-        <PrimeReactProvider>
+        <MantineProvider>
           {children}
-          </PrimeReactProvider>
+          </MantineProvider>
         </Providers>
       </body>
     </html>

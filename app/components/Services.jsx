@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchServices } from "../GlobalRedux/Features/services/servicesSlice";
 import { useEffect } from "react";
 import Preloader from "./Preloader";
+import Loader from "./Preloader/Loader";
 
 const Services = () => {
   const dispatch = useDispatch();
@@ -13,7 +14,7 @@ const Services = () => {
     dispatch(fetchServices());
   }, [dispatch]);
 
-  if (loading) return <Preloader/>;
+  if (loading) return <Loader/>;
   if (error) return <p className="text-center text-lg text-red-500">Ошибка: {error}</p>;
 
   return (
