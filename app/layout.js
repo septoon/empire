@@ -16,7 +16,7 @@ export default function RootLayout({ children }) {
     <html lang="ru">
             <head>
         <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
         <meta name="description" content={metadata.description} />
         {/* <meta name="yandex-verification" content="78aa700c47bf7bf0" /> */}
         {/* <meta name="google-site-verification" content="et7FgAkduvH-MnEIr8xMcwPIO216XHQhmPvcTg778Rk" /> */}

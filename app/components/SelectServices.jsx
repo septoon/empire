@@ -1,42 +1,40 @@
-import React, { useState, useEffect } from 'react';
+'use client'
+
+import React from 'react';
 import { MultiSelect } from '@mantine/core';
+import { useSelector, useDispatch } from 'react-redux';
+import { setSelectedServices } from '../GlobalRedux/Features/modal/selectedServicesSlice';
+import { selectNodes } from '../GlobalRedux/Selectors/servicesSelectors';
 
-export default function SelectServices() {
-  const [selectedServices, setSelectedServices] = useState([]);
-  const [serviceOptions, setServiceOptions] = useState([]);
+const SelectServices = () => {
+  const nodes = useSelector(selectNodes);
+  const selectedServices = useSelector((state) => state.selectedServices.selectedServices);
+  const dispatch = useDispatch();
 
-  useEffect(() => {
-    // Пример данных для услуг
-    const data = [
-      { category: 'Эпиляция', items: [{ name: 'Лицо', price: 300 }, { name: 'Ноги', price: 500 }] },
-    ];
+  const handleChange = (selected) => {
+    dispatch(setSelectedServices(selected));
+  };
 
-    if (data && Array.isArray(data) && data.length > 0) {
-      const options = data.flatMap((category) =>
-        category.items.map((item) => ({
-          value: item.name,
-          label: `${category.category} – ${item.name} (${item.price}₽)`,
-        }))
-      );
-      setServiceOptions(options);
-    }
-  }, []);
-
+  const mSelectPlaceholder = !selectedServices.length ? "Выберите услуги" : ""
   return (
     <MultiSelect
-  label="Услуги"
-  placeholder="Выберите услуги"
-  data={serviceOptions}
-  value={selectedServices}
-  onChange={setSelectedServices}
-  searchable
-  nothingFound={<span>Услуги не найдены</span>}
-  clearable
-  required
-  classNames={{
-    dropdown: 'max-h-[300px] overflow-y-auto',
-  }}
-  mb="md"
-/>
+      label="Услуги"
+      placeholder={mSelectPlaceholder}
+      data={nodes.map((node) => ({
+        value: node.name,
+        label: `${node.name} (${node.price || ''}₽)`,
+      }))}
+      value={selectedServices}
+      onChange={handleChange}
+      searchable
+      clearable
+      required
+      classNames={{
+        dropdown: 'max-h-[300px] overflow-y-auto',
+      }}
+      mb="md"
+    />
   );
-}
+};
+
+export default React.memo(SelectServices);

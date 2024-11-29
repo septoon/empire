@@ -22,7 +22,7 @@ export default function Home() {
           />
         </div>
         <div className="flex flex-col items-end">
-          <h1 className="text-2xl  text-white">Империя сияния</h1>
+          <h1 className="text-2xl text-white">Империя сияния</h1>
           <p>Алушта</p>
         </div>
       </header>
