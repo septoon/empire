@@ -18,6 +18,11 @@ export default function RootLayout({ children }) {
             <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#ba7b6a" />
+        <link rel="apple-touch-icon" href="/icon-192x192.png" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="description" content={metadata.description} />
         {/* <meta name="yandex-verification" content="78aa700c47bf7bf0" /> */}
         {/* <meta name="google-site-verification" content="et7FgAkduvH-MnEIr8xMcwPIO216XHQhmPvcTg778Rk" /> */}

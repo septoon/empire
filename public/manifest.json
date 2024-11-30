@@ -1,0 +1,20 @@
+{
+  "name": "Империя Сияния",
+  "short_name": "Империя",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#bf6850",
+  "theme_color": "#ba7b6a",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}
