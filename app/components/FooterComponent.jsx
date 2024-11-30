@@ -4,7 +4,7 @@ import React from 'react'
 
 const FooterComponent = () => {
   return (
-    <div className='w-full bg-tahiti p-8 mt-8 flex flex-col flex-wrap items-start justify-center '>
+    <div className='w-full bg-tahiti px-8 pt-8 pb-4 mt-8 flex flex-col flex-wrap items-start justify-center '>
       <p>Наш офис:</p>
       <p className='font-bold mb-1'>Алушта, улица Багликова 8А</p>
       <p className='font-bold mb-1'>Гостиница "Южная ночь", 1 этаж, 1 кабинет</p>

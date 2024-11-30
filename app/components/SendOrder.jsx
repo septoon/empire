@@ -51,7 +51,7 @@ const SendOrder = () => {
   }, [name, phone, dateTime, selectedServices]);
 
   return (
-    <button onClick={sendOrder} disabled={isFormValid} className={`w-full py-2 text-xl font-bold ${
+    <button onClick={sendOrder} className={`w-full py-2 text-xl font-bold ${
         isFormValid ? 'bg-tahiti' : 'bg-red'} text-white rounded-lg`}>Отправить</button>
   )
 }
