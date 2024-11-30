@@ -23,16 +23,16 @@ const Services = () => {
         <div key={category.category} className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">{category.category}</h2>
           <div className="overflow-x-auto">
-            <table className="min-w-full bg-silverAdmin text-dark shadow-md rounded-lg overflow-hidden">
-              <thead className="bg-silverAdmin ">
+            <table className="min-w-full bg-dark  text-silverAdmin shadow-md rounded-lg overflow-hidden">
+              <thead className="bg-dark ">
                 <tr className="">
                   <th className="p-3 text-left font-medium text-gray-700">Наименование</th>
                   <th className="p-3 text-right font-medium text-gray-700">Цена</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="bg-dark">
                 {category.items.map((item, index) => (
-                  <tr key={item.name} className={`${index % 2 === 0 ? 'bg-white' : 'bg-white'}`}>
+                  <tr key={item.name} className='bg-darkAdmin text-silverAdmin'>
                     <td className="p-3 text-left">{item.name}</td>
                     <td className="p-3 text-right">{item.price}₽</td>
                   </tr>
