@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import React from 'react';
 import { Modal, InputBase, Textarea } from '@mantine/core';
 import { IMaskInput } from 'react-imask';
@@ -8,29 +8,34 @@ import SelectServices from './SelectServices';
 import { DateTimePicker } from '@mantine/dates';
 import 'dayjs/locale/ru';
 import SendOrder from './SendOrder';
+import {
+  setComment,
+  setDateTime,
+  setName,
+  setPhone,
+} from '../GlobalRedux/Features/form/formSlice';
 
 const DialogForm = () => {
-    const dispatch = useDispatch();
-    const isModalOpen = useSelector((state) => state.modal.isOpen);
+  const dispatch = useDispatch();
+  const isModalOpen = useSelector((state) => state.modal.isOpen);
+  const { name, phone, dateTime, comment } = useSelector((state) => state.form);
 
-    const handleOpen = () => {
-        dispatch(openModal());
-      };
-    const handleClose = () => {
-      dispatch(closeModal());
-    };
+  const handleOpen = () => {
+    dispatch(openModal());
+  };
+  const handleClose = () => {
+    dispatch(closeModal());
+  };
 
   return (
     <>
-      <Modal
-        opened={isModalOpen}
-        onClose={handleClose}
-        title="Записаться на приём"
-      >
+      <Modal opened={isModalOpen} onClose={handleClose} title="Записаться на приём">
         <form>
           <InputBase
             label="Ваше имя"
             placeholder="Введите ваше имя"
+            value={name}
+            onChange={(e) => dispatch(setName(e.target.value))}
             required
             mb="md"
           />
@@ -39,31 +44,42 @@ const DialogForm = () => {
             component={IMaskInput}
             mask="+7 (000) 000-00-00"
             placeholder="Введите номер телефона"
-            inputMode="numeric" 
+            value={phone}
+            onAccept={(value) => dispatch(setPhone(value))}
+            inputMode="numeric"
             required
             mb="md"
           />
+        <SelectServices />
           <DateTimePicker
-            valueFormat="DD MMM YYYY HH:mm"
-            locale='ru'
+            valueFormat="DD MMM HH:mm"
+            locale="ru"
             label="Дата и время"
-            minDate={new Date()} 
-            // value={new Date()}
+            minDate={new Date()}
+            value={dateTime ? new Date(dateTime) : null}
+            onChange={(value) => {
+              const isoDate = value ? value.toISOString() : null;
+              dispatch(setDateTime(isoDate));
+            }}
             placeholder="Выберите дату и время"
-            />
-          <SelectServices />
+          />
           <Textarea
             label="Комментарий"
             placeholder="Дополнительная информация"
+            value={comment}
+            onChange={(e) => dispatch(setComment(e.target.value))}
             mb="md"
           />
-          <SendOrder />
         </form>
+          <SendOrder />
       </Modal>
-      <button className="w-full py-2 text-xl font-bold bg-tahiti text-white rounded-lg" onClick={handleOpen}>Заисаться</button>
-        
+      <button
+        className="w-full py-2 text-xl font-bold bg-tahiti text-white rounded-lg"
+        onClick={handleOpen}>
+        Заисаться
+      </button>
     </>
   );
-}
+};
 
 export default DialogForm;

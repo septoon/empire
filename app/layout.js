@@ -8,7 +8,7 @@ import { MantineProvider } from '@mantine/core';
 
 export const metadata = {
   title: "Империя сияния",
-  description: "Студия красоты «Империя сияния»",
+  description: "Студия красоты в Алуште «Империя сияния»",
 };
 
 export default function RootLayout({ children }) {

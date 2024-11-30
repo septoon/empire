@@ -5,7 +5,6 @@ import FooterComponent from "./components/FooterComponent";
 import { FaHeart, FaHandHoldingWater } from "react-icons/fa";
 import { BsDropletFill } from "react-icons/bs";
 import { RiNumber5 } from "react-icons/ri";
-import ToOrderButton from "./components/ToOrderButton";
 
 
 export default function Home() {
@@ -29,14 +28,13 @@ export default function Home() {
       <main className="flex flex-col gap-8 items-center sm:items-start">
         <div className="w-full flex flex-col justify-between p-4 h-[500px] bg-main bg-cover bg-no-repeat bg-center">
           <div className="flex flex-col">
-          <h2 className="text-5xl drop-shadow-lg mb-2">Лазерная эпиляция от</h2>
-          <p className="text-5xl font-bold drop-shadow-lg">300 ₽ </p>
+            <h2 className="text-5xl drop-shadow-lg mb-2">Лазерная эпиляция от</h2>
+            <p className="text-5xl font-bold drop-shadow-lg">300 ₽ </p>
           </div>
           <div className="flex flex-col">
-          <h2 className="text-2xl drop-shadow-lg mb-2">Эпиляция нового поколения с апаратом</h2>
-          <p className="text-5xl font-extrabold drop-shadow-lg">MLG LASER </p>
+            <h2 className="text-2xl drop-shadow-lg mb-2">Эпиляция нового поколения с апаратом</h2>
+            <p className="text-5xl font-extrabold drop-shadow-lg">MLG LASER </p>
           </div>
-          {/* <ToOrderButton /> */}
           <DialogForm />
         </div>
         <section className="flex flex-col items-start w-full px-6 py-8 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 rounded-xl shadow-lg">

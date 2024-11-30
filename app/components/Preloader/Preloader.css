@@ -1,20 +1,24 @@
+/* HTML: <div class="loader"></div> */
 .loader {
+  width: fit-content;
   font-weight: bold;
   font-family: monospace;
   font-size: 30px;
-  display: inline-grid;
+  background: radial-gradient(circle closest-side, #fff 94%, #fff0) left/calc(200% - 1em) 100%;
+  animation: l24-inverted 1s infinite alternate linear;
 }
-.loader:before,
-.loader:after {
-  content:"Загрузка...";
-  grid-area: 1/1;
-  -webkit-mask:linear-gradient(90deg,#000 50%,#0000 0) 0 50%/2ch 100%;
-  animation: l29 2s infinite;
+.loader::before {
+  content: "Услуги и Цены";
+  line-height: 1em;
+  color: #fff0;
+  background: inherit;
+  background-image: radial-gradient(circle closest-side, #bf6850 94%, #fff);
+  -webkit-background-clip: text;
+          background-clip: text;
+          font-family: 'Comfortaa', sans-serif;
+          font-weight: 600;
 }
-.loader:after {
-  -webkit-mask-position:1ch 50%;
-  --s:-1;
-}
-@keyframes l29 {
-   80%,100% {transform: rotate(calc(var(--s,1)*1turn))}
+
+@keyframes l24-inverted {
+  100% { background-position: right; }
 }

@@ -3,7 +3,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { fetchServices } from "../GlobalRedux/Features/services/servicesSlice";
 import { useEffect } from "react";
-import Preloader from "./Preloader";
 import Loader from "./Preloader/Loader";
 
 const Services = () => {
@@ -25,7 +24,7 @@ const Services = () => {
           <h2 className="text-2xl font-semibold mb-4">{category.category}</h2>
           <div className="overflow-x-auto">
             <table className="min-w-full bg-silverAdmin text-dark shadow-md rounded-lg overflow-hidden">
-              <thead className="bg-gray-200 ">
+              <thead className="bg-silverAdmin ">
                 <tr className="">
                   <th className="p-3 text-left font-medium text-gray-700">Наименование</th>
                   <th className="p-3 text-right font-medium text-gray-700">Цена</th>
