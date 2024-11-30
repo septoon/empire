@@ -66,7 +66,7 @@ const DialogForm = () => {
 
   return (
     <>
-      <Modal opened={isModalOpen} onClose={handleClose} title="Записаться на приём">
+      <Modal returnFocus={false} opened={isModalOpen} onClose={handleClose} title="Записаться на приём">
         <form>
           <InputBase
             label="Ваше имя"
