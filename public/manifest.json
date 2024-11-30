@@ -3,8 +3,8 @@
   "short_name": "Империя",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#bf6850",
-  "theme_color": "#ba7b6a",
+  "background_color": "#ba7b6a",
+  "theme_color": "#bf6850",
   "icons": [
     {
       "src": "/icon-192x192.png",
