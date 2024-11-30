@@ -13,27 +13,13 @@ import { setComment, setDateTime, setName, setPhone } from '../GlobalRedux/Featu
 import axios from 'axios';
 import dayjs from 'dayjs';
 
+dayjs.locale('ru');
+
 const DialogForm = () => {
   const dispatch = useDispatch();
   const isModalOpen = useSelector((state) => state.modal.isOpen);
   const { name, phone, dateTime, comment } = useSelector((state) => state.form);
   const [reservedDates, setReservedDates] = useState([]);
-  const [isDateTimeReserved, setIsDateTimeReserved] = useState(false);
-
-  const checkIfDateTimeIsReserved = (value) => {
-    if (!value) {
-      setIsDateTimeReserved(false);
-      return;
-    }
-
-    const selectedTime = value.getTime();
-
-    const isReserved = reservedDates.some((reservedDate) => {
-      return selectedTime === reservedDate.getTime();
-    });
-
-    setIsDateTimeReserved(isReserved);
-  };
 
   useEffect(() => {
     const fetchReservations = async () => {
@@ -44,10 +30,15 @@ const DialogForm = () => {
         setReservedDates(
           reservationsData
             .map((reservation) => {
-              const date = new Date(reservation.date);
-              return isNaN(date.getTime()) ? null : date;
+              if (reservation.startDate && reservation.endDate) {
+                return {
+                  startDate: reservation.startDate,
+                  endDate: reservation.endDate,
+                };
+              }
+              return null;
             })
-            .filter((date) => date !== null)
+            .filter((reservation) => reservation !== null)
         );
       } catch (error) {
         console.error('Ошибка загрузки забронированных дат:', error);
@@ -64,6 +55,15 @@ const DialogForm = () => {
     dispatch(closeModal());
   };
 
+  const currentYear = dayjs().year();
+
+  // Проверяем валидность dateTime
+  const dateTimeValue = dateTime
+    ? dayjs(`${currentYear}-${dateTime}`, 'YYYY-MM-DDTHH:mm')
+    : null;
+
+  const isValidDateTime = dateTimeValue && dateTimeValue.isValid();
+
   return (
     <>
       <Modal opened={isModalOpen} onClose={handleClose} title="Записаться на приём">
@@ -74,6 +74,9 @@ const DialogForm = () => {
             value={name}
             onChange={(e) => dispatch(setName(e.target.value))}
             required
+            styles={{
+              input: { fontSize: '16px' },
+            }}
             mb="md"
           />
           <InputBase
@@ -85,38 +88,41 @@ const DialogForm = () => {
             onAccept={(value) => dispatch(setPhone(value))}
             inputMode="numeric"
             required
+            styles={{
+              input: { fontSize: '16px' },
+            }}
             mb="md"
           />
           <SelectServices />
           <DateTimePicker
-            valueFormat="DD MMM YYYY HH:mm"
+            valueFormat="DD MMM HH:mm"
             locale="ru"
             label="Дата и время"
             minDate={new Date()}
-            value={dateTime ? new Date(dateTime) : null}
+            value={
+              isValidDateTime
+                ? dateTimeValue.toDate()
+                : null
+            }
             onChange={(value) => {
-              const isoDate = value ? value.toISOString() : null;
-              dispatch(setDateTime(isoDate));
-              checkIfDateTimeIsReserved(value);
+              const formattedDate = value ? dayjs(value).format('MM-DDTHH:mm') : null;
+              dispatch(setDateTime(formattedDate));
             }}
             placeholder="Выберите дату и время"
           />
-
-          {/* Отображение сообщения об ошибке */}
-          {isDateTimeReserved && (
-            <div style={{ color: 'red', marginTop: '10px' }}>
-              Выбранное время уже занято. Пожалуйста, выберите другое время.
-            </div>
-          )}
           <Textarea
             label="Комментарий"
             placeholder="Дополнительная информация"
             value={comment}
             onChange={(e) => dispatch(setComment(e.target.value))}
             mb="md"
+            styles={{
+              input: { fontSize: '16px' },
+              body: { fontSize: '16px' },
+            }}
           />
         </form>
-        <SendOrder reservedDates={reservedDates} isDateTimeReserved={isDateTimeReserved} />
+        <SendOrder reservedDates={reservedDates} />
       </Modal>
       <button
         className="w-full py-2 text-xl font-bold bg-tahiti text-white rounded-lg"

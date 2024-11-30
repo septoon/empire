@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   name: '',
   phone: '',
-  dateTime: new Date().toISOString(),
+  dateTime: null,
   comment: '',
 };
 
@@ -26,7 +26,7 @@ const formSlice = createSlice({
     clearForm(state) {
       state.name = '';
       state.phone = '';
-      state.dateTime = new Date().toISOString();
+      state.dateTime = null;
       state.comment = '';
     },
   },

@@ -1,23 +1,87 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
 import { clearForm } from '../GlobalRedux/Features/form/formSlice';
 import { clearSelectedServices } from '../GlobalRedux/Features/modal/selectedServicesSlice';
 import { closeModal } from '../GlobalRedux/Features/modal/modalSlice';
+import { notifications } from '@mantine/notifications';
 
 import dayjs from 'dayjs';
 import 'dayjs/locale/ru';
 
 dayjs.locale('ru');
 
-const SendOrder = ({ reservedDates, isDateTimeReserved }) => {
+import { selectNodes } from '../GlobalRedux/Selectors/servicesSelectors';
+import { Button } from '@mantine/core';
+
+const SendOrder = ({ reservedDates }) => {
   const { name, phone, dateTime, comment } = useSelector((state) => state.form);
   const selectedServices = useSelector((state) => state.selectedServices.selectedServices);
-  const formattedDateTime = dateTime ? dayjs(dateTime).format('DD MMM YYYY HH:mm') : 'Не указано';
-  const formattedPhone = phone.replace(/\s/g, '');
+  const nodes = useSelector(selectNodes);
+  const [isLoadingBtn, setIsLoadingBtn] = useState(false);
   const dispatch = useDispatch();
+
+  const currentYear = dayjs().year();
+
+  // Рассчитываем общую длительность выбранных услуг
+  const totalDuration = useMemo(() => {
+    let duration = 0;
+    selectedServices.forEach((serviceName) => {
+      const service = nodes.find((node) => node.name === serviceName);
+      if (service) {
+        duration += service.duration || 0;
+      }
+    });
+    return duration; // длительность в минутах
+  }, [selectedServices, nodes]);
+
+  // Рассчитываем время окончания бронирования
+  const endDateTime = useMemo(() => {
+    if (dateTime) {
+      const dateWithYear = `${currentYear}-${dateTime}`;
+      let end = dayjs(dateWithYear, 'YYYY-MM-DDTHH:mm');
+
+      if (totalDuration > 0) {
+        end = end.add(totalDuration, 'minute');
+      } else {
+        // Если длительность 0, добавляем минимальную длительность (например, 1 минута)
+        end = end.add(1, 'minute');
+      }
+
+      return end.format('YYYY-MM-DDTHH:mm');
+    }
+    return null;
+  }, [dateTime, totalDuration, currentYear]);
+
+  // Функция для проверки пересечения интервалов
+  const hasOverlap = (start1, end1, start2, end2) => {
+    const s1 = dayjs(start1, 'YYYY-MM-DDTHH:mm');
+    const e1 = dayjs(end1, 'YYYY-MM-DDTHH:mm');
+    const s2 = dayjs(start2, 'YYYY-MM-DDTHH:mm');
+    const e2 = dayjs(end2, 'YYYY-MM-DDTHH:mm');
+
+    return s1.isBefore(e2) && e1.isAfter(s2);
+  };
+
+  // Проверяем, занято ли выбранное время
+  const isDateTimeReserved = useMemo(() => {
+    if (!dateTime || !endDateTime) return false;
+    return reservedDates.some((reservation) => {
+      return hasOverlap(
+        `${currentYear}-${dateTime}`,
+        endDateTime,
+        reservation.startDate,
+        reservation.endDate,
+      );
+    });
+  }, [dateTime, endDateTime, reservedDates, currentYear]);
+
+  // Обновленное условие валидности формы
+  const isFormValid = useMemo(() => {
+    return name.trim() && phone.trim() && dateTime;
+  }, [name, phone, dateTime]);
 
   const onClickClearOrder = () => {
     dispatch(clearForm());
@@ -26,6 +90,11 @@ const SendOrder = ({ reservedDates, isDateTimeReserved }) => {
   };
 
   const sendOrder = async () => {
+    const formattedDateTime = dateTime
+      ? dayjs(`${currentYear}-${dateTime}`, 'YYYY-MM-DDTHH:mm').format('DD MMM HH:mm')
+      : 'Не указано';
+    const formattedPhone = phone.replace(/\s/g, '');
+
     const message = `Имя: ${name}
 Номер телефона: ${formattedPhone}
 Дата и время: ${formattedDateTime}
@@ -38,33 +107,42 @@ const SendOrder = ({ reservedDates, isDateTimeReserved }) => {
         text: message,
       });
       console.log('Сообщение отправлено в Telegram:', message);
-      onClickClearOrder();
     } catch (err) {
       console.warn('Ошибка отправки сообщения в Telegram:', err);
     }
   };
 
   const sendReservation = async () => {
+    setIsLoadingBtn(true);
     if (!dateTime) {
       console.error('Дата и время не указаны!');
+      setIsLoadingBtn(false);
       return;
     }
 
-    // Проверяем, не занято ли выбранное время
-    const selectedTime = new Date(dateTime).getTime();
-    const isReserved = reservedDates.some((reservedDate) => {
-      return selectedTime === reservedDate.getTime();
-    });
-
-    if (isReserved) {
+    if (isDateTimeReserved) {
       console.error('Выбранное время уже занято!');
+      setIsLoadingBtn(false);
       return;
     }
 
-    // Создаем новый объект бронирования
+    if (selectedServices.length === 0) {
+      notifications.show({
+        title: 'Ошибка',
+        message: 'Пожалуйста, выберите хотя бы одну услугу.',
+        color: 'red',
+        position: 'bottom-center',
+      });
+      setIsLoadingBtn(false);
+      return;
+    }
+
+    const startDateTime = `${currentYear}-${dateTime}`;
+
     const newReservation = {
-      id: Date.now().toString(), // Уникальный идентификатор
-      date: new Date(dateTime).toISOString(), // Сохраняем дату в формате ISO
+      id: Date.now().toString(),
+      startDate: startDateTime, // Время начала в формате 'YYYY-MM-DDTHH:mm'
+      endDate: endDateTime, // Время окончания
     };
 
     try {
@@ -76,33 +154,60 @@ const SendOrder = ({ reservedDates, isDateTimeReserved }) => {
       const updatedReservations = [...currentReservations, newReservation];
 
       // Отправляем обновленный массив на сервер
-      await axios.put('https://api.imperia-siyaniya.ru/api/save/reservations.json', updatedReservations, {
-        headers: {
-          'Content-Type': 'application/json',
+      await axios.put(
+        'https://api.imperia-siyaniya.ru/api/save/reservations.json',
+        updatedReservations,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
         },
+      );
+
+      // Отправляем сообщение в Telegram
+      await sendOrder();
+
+      // Показываем уведомление
+      notifications.show({
+        title: 'Ваша запись принята!',
+        message: 'Ожидайте смс с подтверждением.',
+        position: 'bottom-center',
+        color: 'green',
       });
 
-      console.log('Успешное бронирование:', newReservation);
-      sendOrder(); // Отправляем данные в Telegram
+      // Очищаем форму и закрываем модальное окно
+      onClickClearOrder();
+      setIsLoadingBtn(false);
     } catch (error) {
       console.error('Ошибка при обновлении данных бронирования:', error);
+      notifications.show({
+        title: 'Ошибка',
+        message: 'Не удалось записаться. Пожалуйста, попробуйте позже.',
+        color: 'red',
+        position: 'bottom-center',
+      });
+      setIsLoadingBtn(false);
     }
   };
 
-  const isFormValid = useMemo(() => {
-    return name.trim() && phone.trim() && dateTime && selectedServices.length > 0;
-  }, [name, phone, dateTime, selectedServices]);
-
   return (
-    <button
-      onClick={sendReservation}
-      className={`w-full py-2 text-xl font-bold ${
-        isFormValid && !isDateTimeReserved ? 'bg-tahiti' : 'bg-gray'
-      } text-white rounded-lg`}
-      disabled={!isFormValid || isDateTimeReserved}
-    >
-      {isDateTimeReserved ? 'Это время занято' : 'Отправить'}
-    </button>
+    <>
+      <Button
+        variant="filled"
+        onClick={sendReservation}
+        disabled={!isFormValid || isDateTimeReserved}
+        loading={isLoadingBtn}
+        fullWidth
+        color="#3ab7bf"
+      >
+        {isDateTimeReserved ? 'Это время занято' : 'Отправить'}
+      </Button>
+      {isDateTimeReserved && (
+        <div style={{ color: 'red', marginTop: '10px' }}>
+          Выбранное время уже занято. Пожалуйста, выберите другое время.
+        </div>
+      )}
+    </>
   );
 };
 

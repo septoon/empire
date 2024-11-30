@@ -4,6 +4,7 @@ import "./globals.css";
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import { MantineProvider } from '@mantine/core';
+import { Notifications } from '@mantine/notifications';
 
 
 export const metadata = {
@@ -48,6 +49,7 @@ export default function RootLayout({ children }) {
       >
         <Providers>
         <MantineProvider>
+          <Notifications />
           {children}
           </MantineProvider>
         </Providers>
