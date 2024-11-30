@@ -130,8 +130,11 @@ const DialogForm = () => {
         onClick={handleOpen}
         fullWidth
         color="#3ab7bf"
-        radius={8}
-        style={{height: 40}}
+        radius={10}
+        size='xl'
+        style={{
+          boxShadow: '4px 4px 18px rgba(0, 0, 0, 0.2)',
+        }}
       >
         Записаться
       </Button>
