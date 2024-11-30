@@ -33,6 +33,11 @@ const SelectServices = () => {
         dropdown: 'max-h-[300px] overflow-y-auto',
       }}
       mb="md"
+      styles={{
+        input: {
+          fontSize: '16px',
+        },
+      }}
     />
   );
 };
