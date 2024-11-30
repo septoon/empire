@@ -150,7 +150,7 @@ const SendOrder = ({ reservedDates }) => {
         title: 'Ваша запись принята!',
         message: 'Ожидайте смс с подтверждением.',
         position: 'bottom-center',
-        color: 'green',
+        color: '#ba7b6a',
       });
 
       // Очищаем форму и закрываем модальное окно
