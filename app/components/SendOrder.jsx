@@ -15,6 +15,7 @@ dayjs.locale('ru');
 
 import { selectNodes } from '../GlobalRedux/Selectors/servicesSelectors';
 import { Button } from '@mantine/core';
+import { sendOrder } from '../common/sendOrder';
 
 const SendOrder = ({ reservedDates }) => {
   const { name, phone, dateTime, comment } = useSelector((state) => state.form);
@@ -89,29 +90,6 @@ const SendOrder = ({ reservedDates }) => {
     dispatch(closeModal());
   };
 
-  const sendOrder = async () => {
-    const formattedDateTime = dateTime
-      ? dayjs(`${currentYear}-${dateTime}`, 'YYYY-MM-DDTHH:mm').format('DD MMM HH:mm')
-      : 'Не указано';
-    const formattedPhone = phone.replace(/\s/g, '');
-
-    const message = `Имя: ${name}
-Номер телефона: ${formattedPhone}
-Дата и время: ${formattedDateTime}
-Услуги: ${selectedServices.join(', ')}
-Комментарий: ${comment}`;
-
-    try {
-      await axios.post(`https://api.telegram.org/bot${process.env.NEXT_PUBLIC_TOKEN}/sendMessage`, {
-        chat_id: process.env.NEXT_PUBLIC_CHAT_ID,
-        text: message,
-      });
-      console.log('Сообщение отправлено в Telegram:', message);
-    } catch (err) {
-      console.warn('Ошибка отправки сообщения в Telegram:', err);
-    }
-  };
-
   const sendReservation = async () => {
     setIsLoadingBtn(true);
     if (!dateTime) {
@@ -165,7 +143,7 @@ const SendOrder = ({ reservedDates }) => {
       );
 
       // Отправляем сообщение в Telegram
-      await sendOrder();
+      await sendOrder(dateTime, dayjs, currentYear, phone, name, selectedServices, comment);
 
       // Показываем уведомление
       notifications.show({

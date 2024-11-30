@@ -26,7 +26,7 @@ export default function Home() {
         </div>
       </header>
       <main className="flex flex-col gap-8 items-center sm:items-start">
-        <div className="w-full flex flex-col justify-between p-4 h-[500px] bg-main bg-cover bg-no-repeat bg-center">
+        <div className="w-full flex flex-col justify-between p-4 h-[500px] bg-main bg-cover bg-no-repeat bg-center rounded-bl-2xl rounded-br-2xl">
           <div className="flex flex-col">
             <h2 className="text-5xl drop-shadow-lg mb-2">Лазерная эпиляция от</h2>
             <p className="text-5xl font-bold drop-shadow-lg">300 ₽ </p>
@@ -37,7 +37,7 @@ export default function Home() {
           </div>
           <DialogForm />
         </div>
-        <section className="flex flex-col items-start w-full px-6 py-8 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 rounded-xl shadow-lg">
+        <section className="flex flex-col items-start w-full px-6 py-8 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 rounded-bl-2xl rounded-br-2xl shadow-lg">
           <h2 className="text-4xl font-bold mb-6 text-white">Преимущества:</h2>
           <ul className="space-y-4">
             <li className="flex items-center gap-4">

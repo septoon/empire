@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Modal, InputBase, Textarea } from '@mantine/core';
+import { Modal, InputBase, Textarea, Button } from '@mantine/core';
 import { IMaskInput } from 'react-imask';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModal, openModal } from '../GlobalRedux/Features/modal/modalSlice';
@@ -125,12 +125,16 @@ const DialogForm = () => {
         </form>
         <SendOrder reservedDates={reservedDates} />
       </Modal>
-      <button
-        className="w-full py-2 text-xl font-bold bg-tahiti text-white rounded-lg"
+      <Button
+        variant="filled"
         onClick={handleOpen}
+        fullWidth
+        color="#3ab7bf"
+        radius={8}
+        style={{height: 40}}
       >
         Записаться
-      </button>
+      </Button>
     </>
   );
 };
