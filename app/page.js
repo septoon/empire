@@ -28,7 +28,7 @@ export default function Home() {
       <main className="flex flex-col gap-8 px-4 items-center">
         <div className="w-full flex flex-col justify-between p-4 h-[500px] bg-main bg-cover bg-no-repeat bg-center rounded-2xl">
           <div className="flex flex-col">
-            <h2 className="text-5xl drop-shadow-lg mb-2">Лазерная эпиляция от</h2>
+            <h2 className="text-4xl drop-shadow-lg mb-2">Лазерная эпиляция от</h2>
             <p className="text-5xl font-bold drop-shadow-lg">300 ₽ </p>
           </div>
           <div className="flex flex-col">
