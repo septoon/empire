@@ -5,11 +5,12 @@ import FooterComponent from "./components/FooterComponent";
 import { FaHeart, FaHandHoldingWater } from "react-icons/fa";
 import { BsDropletFill } from "react-icons/bs";
 import { RiNumber5 } from "react-icons/ri";
+import Carousel from "./components/Carousel";
 
 
 export default function Home() {
   return (
-    <div className="flex flex-col items-center min-h-screen text-white font-comfortaa">
+    <div className="w-full flex flex-col items-center min-h-screen text-white font-comfortaa">
       <header className="w-full flex justify-between items-center py-2 px-4">
         <div className="w-[62px] h-[62px] bg-white rounded-full flex items-center justify-center backdrop-shadow-md">
           <Image
@@ -25,7 +26,7 @@ export default function Home() {
           <p>Алушта</p>
         </div>
       </header>
-      <main className="flex flex-col gap-8 px-4 items-center">
+      <main className="w-full flex flex-col gap-8 px-4 items-center">
         <div className="w-full flex flex-col justify-between p-4 h-[500px] bg-main bg-cover bg-no-repeat bg-center rounded-2xl">
           <div className="flex flex-col">
             <h2 className="text-4xl drop-shadow-lg mb-2">Лазерная эпиляция от</h2>
@@ -37,7 +38,8 @@ export default function Home() {
           </div>
           <DialogForm />
         </div>
-        <section className="flex flex-col items-start w-full px-4 py-8 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 rounded-2xl shadow-lg">
+        <Carousel />
+        <section className="flex flex-col items-start w-full px-4 py-8 bg-dark rounded-2xl shadow-lg">
           <h2 className="text-4xl font-bold mb-6 text-white">Преимущества:</h2>
           <ul className="space-y-4">
             <li className="flex items-center gap-4">

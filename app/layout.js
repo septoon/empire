@@ -50,7 +50,7 @@ export default function RootLayout({ children }) {
           />
       </head>
       <body
-        className='antialiased bg-gradient-to-r from-mainBgStart  via-mainBgMiddle to-mainBg'
+        className='w-full box-border antialiased bg-gradient-to-r from-mainBgStart  via-mainBgMiddle to-mainBg'
       >
         <Providers>
         <MantineProvider>
