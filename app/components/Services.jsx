@@ -34,7 +34,7 @@ const Services = () => {
                 {category.items.map((item, index) => (
                   <tr key={item.name} className={`${index % 2 === 0 ? 'bg-white' : 'bg-white'}`}>
                     <td className="p-3 text-left">{item.name}</td>
-                    <td className="p-3 text-right">{item.price}₽</td>
+                    <td className="p-3 text-right">{item.duration} мин.</td>
                   </tr>
                 ))}
               </tbody>
