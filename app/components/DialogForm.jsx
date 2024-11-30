@@ -98,7 +98,7 @@ const DialogForm = () => {
             valueFormat="DD MMM HH:mm"
             locale="ru"
             label="Дата и время"
-            timeInputProps={{ minutesListFormat: '0,10,20,30,40,50' }}
+            timeInputProps={{ step: 10 }}
             minDate={new Date()}
             value={
               isValidDateTime
