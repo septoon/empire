@@ -17,7 +17,7 @@ const Services = () => {
   if (error) return <p className="text-center text-lg text-red-500">Ошибка: {error}</p>;
 
   return (
-    <div className="services container mx-auto px-4 py-8">
+    <div className="services container mx-auto py-8">
       <h1 className="text-3xl font-bold mb-6 text-center">Услуги и Цены</h1>
       {data.map((category) => (
         <div key={category.category} className="mb-8">
