@@ -151,6 +151,7 @@ const SendOrder = ({ reservedDates }) => {
         message: 'Ожидайте смс с подтверждением.',
         position: 'bottom-center',
         color: '#ba7b6a',
+        autoClose: 6000,
       });
 
       // Очищаем форму и закрываем модальное окно
