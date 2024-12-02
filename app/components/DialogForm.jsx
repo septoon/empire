@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { Modal, InputBase, Textarea, Button } from '@mantine/core';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Modal, InputBase, Textarea, Button, Group } from '@mantine/core';
 import { IMaskInput } from 'react-imask';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModal, openModal } from '../GlobalRedux/Features/modal/modalSlice';
 import SelectServices from './SelectServices';
-import { DateTimePicker } from '@mantine/dates';
+import { DatePicker, DateTimePicker } from '@mantine/dates';
 import 'dayjs/locale/ru';
 import SendOrder from './SendOrder';
 import { setComment, setDateTime, setName, setPhone } from '../GlobalRedux/Features/form/formSlice';
@@ -20,6 +20,9 @@ const DialogForm = () => {
   const isModalOpen = useSelector((state) => state.modal.isOpen);
   const { name, phone, dateTime, comment } = useSelector((state) => state.form);
   const [reservedDates, setReservedDates] = useState([]);
+  const [selectedTime, setSelectedTime] = useState(null);
+
+  const availableTimes = ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '20:00', '21:00'];
 
   useEffect(() => {
     const fetchReservations = async () => {
@@ -30,10 +33,9 @@ const DialogForm = () => {
         setReservedDates(
           reservationsData
             .map((reservation) => {
-              if (reservation.startDate && reservation.endDate) {
+              if (reservation.startDate) {
                 return {
                   startDate: reservation.startDate,
-                  endDate: reservation.endDate,
                 };
               }
               return null;
@@ -59,10 +61,35 @@ const DialogForm = () => {
 
   // Проверяем валидность dateTime
   const dateTimeValue = dateTime
-    ? dayjs(`${currentYear}-${dateTime}`, 'YYYY-MM-DDTHH:mm')
+    ? dayjs(`${currentYear}-${dateTime}${selectedTime}`, 'YYYY-MM-DDT')
     : null;
 
-  const isValidDateTime = dateTimeValue && dateTimeValue.isValid();
+    const isValidDateTime = dateTime && dayjs(`${currentYear}-${dateTime}`, 'YYYY-MM-DD').isValid();
+
+  const isDateTimeReserved = (time) => {
+    if (!dateTime || !time) return false;
+  
+    // Формируем строку для выбранного времени
+    const selectedDateTimeString = `${currentYear}-${dateTime}${time}`.trim();
+
+    // Проверяем совпадение строк
+    return reservedDates.some((reservation) => reservation.startDate === selectedDateTimeString);
+  };
+
+  const handleDateChange = (value) => {
+    const formattedDate = value ? dayjs(value).format('MM-DDT') : null;
+    dispatch(setDateTime(formattedDate));
+    setSelectedTime(availableTimes[0]); // Устанавливаем первое доступное время по умолчанию
+  };
+
+  const handleTimeSelect = (time) => {
+    if (!dateTime) {
+      // Если дата не выбрана, устанавливаем текущую дату
+      const today = dayjs().format('MM-DDT');
+      dispatch(setDateTime(today));
+    }
+    setSelectedTime(time);
+  };
 
   return (
     <>
@@ -94,23 +121,32 @@ const DialogForm = () => {
             mb="md"
           />
           <SelectServices />
-          <DateTimePicker
-            valueFormat="DD MMM HH:mm"
+          <p className=' text-xm'>Дата и время *</p>
+          <div className='w-full flex flex-col items-center my-4'>
+          <DatePicker
+            value={isValidDateTime ? dayjs(`${currentYear}-${dateTime}`, 'YYYY-MM-DD').toDate() : null}
+            onChange={handleDateChange}
+            valueFormat="DD MMM"
             locale="ru"
-            label="Дата и время"
-            timeInputProps={{ step: 10 }}
+            label="Дата"
             minDate={new Date()}
-            value={
-              isValidDateTime
-                ? dateTimeValue.toDate()
-                : null
-            }
-            onChange={(value) => {
-              const formattedDate = value ? dayjs(value).format('MM-DDTHH:mm') : null;
-              dispatch(setDateTime(formattedDate));
-            }}
-            placeholder="Выберите дату и время"
+            placeholder="Выберите дату"
           />
+          <Group align="center" justify="center" spacing="xs" mt="md">
+            {availableTimes.map((time) => (
+              <Button
+                key={time}
+                variant={selectedTime === time ? 'light' : isDateTimeReserved(time) ? 'outline' : 'filled'}
+                color={isDateTimeReserved(time) ? 'red' : 'blue'}
+                onClick={() => handleTimeSelect(time)}
+                disabled={isDateTimeReserved(time)}
+                size="sm"
+              >
+                {time}
+              </Button>
+            ))}
+          </Group>
+          </div>
           <Textarea
             label="Комментарий"
             placeholder="Дополнительная информация"
@@ -123,7 +159,7 @@ const DialogForm = () => {
             }}
           />
         </form>
-        <SendOrder reservedDates={reservedDates} />
+        <SendOrder selectedTime={selectedTime} />
       </Modal>
       <Button
         variant="filled"

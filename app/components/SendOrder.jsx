@@ -17,7 +17,7 @@ import { selectNodes } from '../GlobalRedux/Selectors/servicesSelectors';
 import { Button } from '@mantine/core';
 import { sendOrder } from '../common/sendOrder';
 
-const SendOrder = ({ reservedDates }) => {
+const SendOrder = ({ selectedTime }) => {
   const { name, phone, dateTime, comment } = useSelector((state) => state.form);
   const selectedServices = useSelector((state) => state.selectedServices.selectedServices);
   const nodes = useSelector(selectNodes);
@@ -66,25 +66,6 @@ const SendOrder = ({ reservedDates }) => {
     return s1.isBefore(e2) && e1.isAfter(s2);
   };
 
-  // Проверяем, занято ли выбранное время
-  const isDateTimeReserved = useMemo(() => {
-    if (!dateTime || !endDateTime) return false;
-  
-    return reservedDates.some((reservation) => {
-      const reservationStart = dayjs(reservation.startDate, 'YYYY-MM-DDTHH:mm');
-      const reservationEnd = dayjs(reservation.endDate, 'YYYY-MM-DDTHH:mm');
-  
-      const selectedStart = dayjs(`${currentYear}-${dateTime}`, 'YYYY-MM-DDTHH:mm');
-      const selectedEnd = dayjs(endDateTime, 'YYYY-MM-DDTHH:mm');
-  
-      // Проверяем пересечение интервалов
-      return (
-        selectedStart.isBefore(reservationEnd) &&
-        selectedEnd.isAfter(reservationStart)
-      );
-    });
-  }, [dateTime, endDateTime, reservedDates, currentYear]);
-
   // Обновленное условие валидности формы
   const isFormValid = useMemo(() => {
     return name.trim() && phone.trim() && dateTime;
@@ -105,17 +86,6 @@ const SendOrder = ({ reservedDates }) => {
       return;
     }
   
-    if (isDateTimeReserved) {
-      notifications.show({
-        title: 'Ошибка',
-        message: 'Выбранное время уже занято. Пожалуйста, выберите другое время.',
-        color: 'red',
-        position: 'bottom-center',
-      });
-      setIsLoadingBtn(false);
-      return;
-    }
-  
     if (selectedServices.length === 0) {
       notifications.show({
         title: 'Ошибка',
@@ -127,12 +97,11 @@ const SendOrder = ({ reservedDates }) => {
       return;
     }
   
-    const startDateTime = `${currentYear}-${dateTime}`;
+    const startDateTime = `${currentYear}-${dateTime}${selectedTime}`;
   
     const newReservation = {
       id: Date.now().toString(), // Уникальный идентификатор
       startDate: startDateTime, // Время начала
-      endDate: endDateTime,     // Время окончания
     };
   
     try {
@@ -155,7 +124,7 @@ const SendOrder = ({ reservedDates }) => {
       );
   
       // Шаг 4: Отправляем сообщение в Telegram
-      await sendOrder(dateTime, dayjs, currentYear, phone, name, selectedServices, comment);
+      await sendOrder(dateTime, selectedTime, dayjs, currentYear, phone, name, selectedServices, comment);
   
       // Показываем уведомление об успехе
       notifications.show({
@@ -186,18 +155,13 @@ const SendOrder = ({ reservedDates }) => {
       <Button
         variant="filled"
         onClick={sendReservation}
-        disabled={!isFormValid || isDateTimeReserved}
+        disabled={!isFormValid || !selectedTime}
         loading={isLoadingBtn}
         fullWidth
         color="#3ab7bf"
       >
-        {isDateTimeReserved ? 'Это время занято' : 'Отправить'}
+        Отправить
       </Button>
-      {isDateTimeReserved && (
-        <div style={{ color: 'red', marginTop: '10px' }}>
-          Выбранное время уже занято. Пожалуйста, выберите другое время.
-        </div>
-      )}
     </>
   );
 };
