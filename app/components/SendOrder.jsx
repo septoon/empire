@@ -69,12 +69,18 @@ const SendOrder = ({ reservedDates }) => {
   // Проверяем, занято ли выбранное время
   const isDateTimeReserved = useMemo(() => {
     if (!dateTime || !endDateTime) return false;
+  
     return reservedDates.some((reservation) => {
-      return hasOverlap(
-        `${currentYear}-${dateTime}`,
-        endDateTime,
-        reservation.startDate,
-        reservation.endDate,
+      const reservationStart = dayjs(reservation.startDate, 'YYYY-MM-DDTHH:mm');
+      const reservationEnd = dayjs(reservation.endDate, 'YYYY-MM-DDTHH:mm');
+  
+      const selectedStart = dayjs(`${currentYear}-${dateTime}`, 'YYYY-MM-DDTHH:mm');
+      const selectedEnd = dayjs(endDateTime, 'YYYY-MM-DDTHH:mm');
+  
+      // Проверяем пересечение интервалов
+      return (
+        selectedStart.isBefore(reservationEnd) &&
+        selectedEnd.isAfter(reservationStart)
       );
     });
   }, [dateTime, endDateTime, reservedDates, currentYear]);
@@ -92,18 +98,24 @@ const SendOrder = ({ reservedDates }) => {
 
   const sendReservation = async () => {
     setIsLoadingBtn(true);
+  
     if (!dateTime) {
       console.error('Дата и время не указаны!');
       setIsLoadingBtn(false);
       return;
     }
-
+  
     if (isDateTimeReserved) {
-      console.error('Выбранное время уже занято!');
+      notifications.show({
+        title: 'Ошибка',
+        message: 'Выбранное время уже занято. Пожалуйста, выберите другое время.',
+        color: 'red',
+        position: 'bottom-center',
+      });
       setIsLoadingBtn(false);
       return;
     }
-
+  
     if (selectedServices.length === 0) {
       notifications.show({
         title: 'Ошибка',
@@ -114,24 +126,24 @@ const SendOrder = ({ reservedDates }) => {
       setIsLoadingBtn(false);
       return;
     }
-
+  
     const startDateTime = `${currentYear}-${dateTime}`;
-
+  
     const newReservation = {
-      id: Date.now().toString(),
-      startDate: startDateTime, // Время начала в формате 'YYYY-MM-DDTHH:mm'
-      endDate: endDateTime, // Время окончания
+      id: Date.now().toString(), // Уникальный идентификатор
+      startDate: startDateTime, // Время начала
+      endDate: endDateTime,     // Время окончания
     };
-
+  
     try {
-      // Получаем текущие бронирования
+      // Шаг 1: Получаем текущие бронирования
       const response = await axios.get('https://api.imperia-siyaniya.ru/reservations.json');
       const currentReservations = Array.isArray(response.data) ? response.data : [];
-
-      // Добавляем новое бронирование
+  
+      // Шаг 2: Добавляем новую запись
       const updatedReservations = [...currentReservations, newReservation];
-
-      // Отправляем обновленный массив на сервер
+  
+      // Шаг 3: Отправляем обновленный массив обратно на сервер
       await axios.put(
         'https://api.imperia-siyaniya.ru/api/save/reservations.json',
         updatedReservations,
@@ -139,13 +151,13 @@ const SendOrder = ({ reservedDates }) => {
           headers: {
             'Content-Type': 'application/json',
           },
-        },
+        }
       );
-
-      // Отправляем сообщение в Telegram
+  
+      // Шаг 4: Отправляем сообщение в Telegram
       await sendOrder(dateTime, dayjs, currentYear, phone, name, selectedServices, comment);
-
-      // Показываем уведомление
+  
+      // Показываем уведомление об успехе
       notifications.show({
         title: 'Ваша запись принята!',
         message: 'Ожидайте смс с подтверждением.',
@@ -153,7 +165,7 @@ const SendOrder = ({ reservedDates }) => {
         color: '#ba7b6a',
         autoClose: 6000,
       });
-
+  
       // Очищаем форму и закрываем модальное окно
       onClickClearOrder();
       setIsLoadingBtn(false);
