@@ -160,7 +160,6 @@ const SendOrder = ({ selectedTime }) => {
         disabled={!isFormValid || !selectedTime}
         loading={isLoadingBtn}
         fullWidth
-        color="#3ab7bf"
       >
         Отправить
       </Button>

@@ -27,13 +27,14 @@ const DialogForm = () => {
   const [selectedTime, setSelectedTime] = useState(null);
   
   useEffect(() => {
-    const today = dayjs().format('MM-DDT');
-    dispatch(setDateTime(today));
     dispatch(fetchReservations())
     dispatch(fetchAvailableTimes())
   }, [dispatch]);
 
   const handleOpen = () => {
+    const today = dayjs().format('MM-DDT'); // Текущая дата в формате MM-DDT
+    dispatch(setDateTime(today));          // Установите текущую дату
+    setSelectedTime(times[0]);             // Установите первое доступное время
     dispatch(openModal());
   };
   const handleClose = () => {
@@ -103,7 +104,7 @@ const DialogForm = () => {
           <div className='w-full flex flex-col items-center my-4'>
           <DatePicker
             value={isValidDateTime ? dayjs(`${currentYear}-${dateTime}`, 'YYYY-MM-DD').toDate() : null}
-            onChange={handleDateChange}
+            onChange={(e) => handleDateChange(e)}
             locale="ru"
             label="Дата"
             minDate={new Date()}
