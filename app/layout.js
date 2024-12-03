@@ -9,7 +9,7 @@ import '@mantine/notifications/styles.css';
 
 export const metadata = {
   title: "Империя сияния",
-  description: "Студия красоты в Алуште «Империя сияния»",
+  description: "Лазерная эпиляция в Алуште «Империя сияния»",
 };
 
 export default function RootLayout({ children }) {
@@ -24,19 +24,19 @@ export default function RootLayout({ children }) {
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="description" content={metadata.description} />
-        {/* <meta name="yandex-verification" content="78aa700c47bf7bf0" /> */}
-        {/* <meta name="google-site-verification" content="et7FgAkduvH-MnEIr8xMcwPIO216XHQhmPvcTg778Rk" /> */}
+        <meta name="yandex-verification" content="512035b8fa9ffe03" />
+        <meta name="google-site-verification" content="MGRXVFZa8QmzFBb_6RVFRNI7Z1hZC7dfAer6zbks_bI" />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://empire-zeta.vercel.app" />
+        <meta property="og:url" content="https://imperia-siyaniya.ru" />
         <meta property="og:title" content="Империя сияния" />
         <meta property="og:description" content="Лазерная эпиляция в Алуште" />
-        {/* <meta property="og:image" content="https://shashlichny-dom.ru/image.jpg" /> */}
+        <meta property="og:image" content="https://imperia-siyaniya.ru/image.webp" />
         
         <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content="https://empire-zeta.vercel.app" />
+        <meta property="twitter:url" content="https://imperia-siyaniya.ru" />
         <meta property="twitter:title" content="Империя сияния" />
-        <meta property="twitter:description" content="азерная эпиляция в Алуште" />
-        {/* <meta property="twitter:image" content="https://shashlichny-dom.ru/image.jpg" /> */}
+        <meta property="twitter:description" content="Лазерная эпиляция в Алуште" />
+        <meta property="twitter:image" content="https://imperia-siyaniya.ru/image.webp" />
 
         <script
             dangerouslySetInnerHTML={{

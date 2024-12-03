@@ -25,9 +25,9 @@ const FooterComponent = () => {
       </div>
       <div className='flex mb-2'>
         <IconClock stroke={2} />
-        <p className='ml-1'>Время работы:</p>
+        <p className='ml-1'>График работы:</p>
       </div>
-      <p className='font-bold'>9:00 - 22:00</p>
+      <p className='font-bold'>ежедневно с 9:00 - 22:00</p>
       <p className='self-center mt-8'>© 2023 Империя сияния</p>
     </div>
   )
