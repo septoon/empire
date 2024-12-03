@@ -15,7 +15,7 @@ export default function Home() {
         <div className="w-[62px] h-[62px] bg-white rounded-full flex items-center justify-center backdrop-shadow-md">
           <Image
             src="/logo.png"
-            alt="Логотип Империи сияния"
+            alt="Студия лазерной эпиляции Империи сияния"
             width={60}
             height={60}
             priority
