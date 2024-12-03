@@ -27,6 +27,8 @@ const DialogForm = () => {
   const [selectedTime, setSelectedTime] = useState(null);
   
   useEffect(() => {
+    const today = dayjs().format('MM-DDT');
+    dispatch(setDateTime(today));
     dispatch(fetchReservations())
     dispatch(fetchAvailableTimes())
   }, [dispatch]);
@@ -39,37 +41,32 @@ const DialogForm = () => {
   };
 
   const currentYear = dayjs().year();
+  const currentHour = new Date().getHours()
 
-  // Проверяем валидность dateTime
-  const dateTimeValue = dateTime
-    ? dayjs(`${currentYear}-${dateTime}${selectedTime}`, 'YYYY-MM-DDT')
-    : null;
-
-    const isValidDateTime = dateTime && dayjs(`${currentYear}-${dateTime}`, 'YYYY-MM-DD').isValid();
+  const isValidDateTime = dateTime && dayjs(`${currentYear}-${dateTime}`, 'YYYY-MM-DD').isValid();
 
   const isDateTimeReserved = (time) => {
-    if (!dateTime || !time) return false;
+    if (!dateTime || typeof time !== 'number') return false;
   
     // Формируем строку для выбранного времени
-    const selectedDateTimeString = `${currentYear}-${dateTime}${time}`.trim();
-
-    // Проверяем совпадение строк
-    return reservedDates.some((reservation) => reservation.startDate === selectedDateTimeString);
+    const selectedDateTimeString = `${currentYear}-${dateTime}${time.toString().padStart(2, '0')}:00`.trim();
+  
+    // Проверяем совпадение строк с забронированными датами
+    const isReserved = reservedDates.some((reservation) => reservation.startDate === selectedDateTimeString);
+  
+    // Проверяем, если выбранная дата совпадает с сегодняшним днем
+    const isToday = dayjs(`${currentYear}-${dateTime}`, 'YYYY-MM-DD').isSame(dayjs(), 'day');
+  
+    // Проверяем, если время меньше текущего часа только для сегодняшнего дня
+    const isPastTimeToday = isToday && time <= currentHour;
+  
+    return isReserved || isPastTimeToday;
   };
 
   const handleDateChange = (value) => {
     const formattedDate = value ? dayjs(value).format('MM-DDT') : null;
     dispatch(setDateTime(formattedDate));
     setSelectedTime(times[0]);
-  };
-
-  const handleTimeSelect = (time) => {
-    if (!dateTime) {
-      // Если дата не выбрана, устанавливаем текущую дату
-      const today = dayjs().format('MM-DDT');
-      dispatch(setDateTime(today));
-    }
-    setSelectedTime(time);
   };
 
   return (
@@ -118,11 +115,11 @@ const DialogForm = () => {
           key={timeObj.time}
           variant={selectedTime === timeObj.time ? 'light' : isDateTimeReserved(timeObj.time) ? 'outline' : 'filled'}
           color={isDateTimeReserved(timeObj.time) ? 'red' : 'blue'}
-          onClick={() => handleTimeSelect(timeObj.time)}
+          onClick={() => setSelectedTime(timeObj.time)}
           disabled={isDateTimeReserved(timeObj.time)}
           size="sm"
         >
-          {timeObj.time}
+          {timeObj.time}:00
         </Button>
       ))}
           </Group>
