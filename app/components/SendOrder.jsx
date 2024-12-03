@@ -16,6 +16,7 @@ dayjs.locale('ru');
 import { selectNodes } from '../GlobalRedux/Selectors/servicesSelectors';
 import { Button } from '@mantine/core';
 import { sendOrder } from '../common/sendOrder';
+import { fetchReservations } from '../GlobalRedux/Features/modal/reservationsSlice';
 
 const SendOrder = ({ selectedTime }) => {
   const { name, phone, dateTime, comment } = useSelector((state) => state.form);
@@ -138,6 +139,7 @@ const SendOrder = ({ selectedTime }) => {
       // Очищаем форму и закрываем модальное окно
       onClickClearOrder();
       setIsLoadingBtn(false);
+      dispatch(fetchReservations())
     } catch (error) {
       console.error('Ошибка при обновлении данных бронирования:', error);
       notifications.show({

@@ -1,17 +1,19 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal, InputBase, Textarea, Button, Group } from '@mantine/core';
 import { IMaskInput } from 'react-imask';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModal, openModal } from '../GlobalRedux/Features/modal/modalSlice';
 import SelectServices from './SelectServices';
-import { DatePicker, DateTimePicker } from '@mantine/dates';
+import { DatePicker } from '@mantine/dates';
 import 'dayjs/locale/ru';
 import SendOrder from './SendOrder';
 import { setComment, setDateTime, setName, setPhone } from '../GlobalRedux/Features/form/formSlice';
-import axios from 'axios';
+
 import dayjs from 'dayjs';
+import { fetchReservations } from '../GlobalRedux/Features/modal/reservationsSlice';
+import { fetchAvailableTimes } from '../GlobalRedux/Features/modal/availableTimesSlice';
 
 dayjs.locale('ru');
 
@@ -19,36 +21,15 @@ const DialogForm = () => {
   const dispatch = useDispatch();
   const isModalOpen = useSelector((state) => state.modal.isOpen);
   const { name, phone, dateTime, comment } = useSelector((state) => state.form);
-  const [reservedDates, setReservedDates] = useState([]);
+  const { reservedDates } = useSelector((state) => state.reservations)
+  const { times } = useSelector((state) => state.availableTimes)
+
   const [selectedTime, setSelectedTime] = useState(null);
-
-  const availableTimes = ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '20:00', '21:00'];
-
+  
   useEffect(() => {
-    const fetchReservations = async () => {
-      try {
-        const response = await axios.get('https://api.imperia-siyaniya.ru/reservations.json');
-        const reservationsData = response.data || [];
-
-        setReservedDates(
-          reservationsData
-            .map((reservation) => {
-              if (reservation.startDate) {
-                return {
-                  startDate: reservation.startDate,
-                };
-              }
-              return null;
-            })
-            .filter((reservation) => reservation !== null)
-        );
-      } catch (error) {
-        console.error('Ошибка загрузки забронированных дат:', error);
-      }
-    };
-
-    fetchReservations();
-  }, []);
+    dispatch(fetchReservations())
+    dispatch(fetchAvailableTimes())
+  }, [dispatch]);
 
   const handleOpen = () => {
     dispatch(openModal());
@@ -79,7 +60,7 @@ const DialogForm = () => {
   const handleDateChange = (value) => {
     const formattedDate = value ? dayjs(value).format('MM-DDT') : null;
     dispatch(setDateTime(formattedDate));
-    setSelectedTime(availableTimes[0]); // Устанавливаем первое доступное время по умолчанию
+    setSelectedTime(times[0]);
   };
 
   const handleTimeSelect = (time) => {
@@ -126,25 +107,24 @@ const DialogForm = () => {
           <DatePicker
             value={isValidDateTime ? dayjs(`${currentYear}-${dateTime}`, 'YYYY-MM-DD').toDate() : null}
             onChange={handleDateChange}
-            valueFormat="DD MMM"
             locale="ru"
             label="Дата"
             minDate={new Date()}
             placeholder="Выберите дату"
           />
           <Group align="center" justify="center" spacing="xs" mt="md">
-            {availableTimes.map((time) => (
-              <Button
-                key={time}
-                variant={selectedTime === time ? 'light' : isDateTimeReserved(time) ? 'outline' : 'filled'}
-                color={isDateTimeReserved(time) ? 'red' : 'blue'}
-                onClick={() => handleTimeSelect(time)}
-                disabled={isDateTimeReserved(time)}
-                size="sm"
-              >
-                {time}
-              </Button>
-            ))}
+          {times.map((timeObj) => (
+        <Button
+          key={timeObj.time}
+          variant={selectedTime === timeObj.time ? 'light' : isDateTimeReserved(timeObj.time) ? 'outline' : 'filled'}
+          color={isDateTimeReserved(timeObj.time) ? 'red' : 'blue'}
+          onClick={() => handleTimeSelect(timeObj.time)}
+          disabled={isDateTimeReserved(timeObj.time)}
+          size="sm"
+        >
+          {timeObj.time}
+        </Button>
+      ))}
           </Group>
           </div>
           <Textarea

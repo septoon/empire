@@ -26,7 +26,6 @@ const SelectServices = () => {
       }))}
       value={selectedServices}
       onChange={handleChange}
-      searchable
       searchable={false}
       clearable
       required

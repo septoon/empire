@@ -2,7 +2,9 @@ import { configureStore } from '@reduxjs/toolkit';
 import servicesReducer from './Features/services/servicesSlice';
 import modalReducer from './Features/modal/modalSlice';
 import selectedServicesReducer from './Features/modal/selectedServicesSlice';
-import formReducer from './Features/form/formSlice'; // Импорт нового редьюсера
+import reservationsReducer from './Features/modal/reservationsSlice';
+import availableTimesReducer from './Features/modal/availableTimesSlice';
+import formReducer from './Features/form/formSlice';
 
 export const store = configureStore({
   reducer: {
@@ -10,5 +12,7 @@ export const store = configureStore({
     modal: modalReducer,
     selectedServices: selectedServicesReducer,
     form: formReducer,
+    reservations: reservationsReducer,
+    availableTimes: availableTimesReducer
   },
 });
