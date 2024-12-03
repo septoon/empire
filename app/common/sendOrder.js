@@ -18,7 +18,6 @@ export const sendOrder = async (dateTime, selectedTime, dayjs, currentYear, phon
       chat_id: process.env.NEXT_PUBLIC_CHAT_ID,
       text: message,
     });
-    console.log('Сообщение отправлено в Telegram:', message);
   } catch (err) {
     console.warn('Ошибка отправки сообщения в Telegram:', err);
   }
