@@ -22,7 +22,7 @@ const DialogForm = () => {
   const isModalOpen = useSelector((state) => state.modal.isOpen);
   const { name, phone, dateTime, comment } = useSelector((state) => state.form);
   const { reservedDates } = useSelector((state) => state.reservations)
-  const { times } = useSelector((state) => state.availableTimes)
+  const { times, loading, error } = useSelector((state) => state.availableTimes)
 
   const [selectedTime, setSelectedTime] = useState(null);
   
@@ -69,6 +69,9 @@ const DialogForm = () => {
     dispatch(setDateTime(formattedDate));
     setSelectedTime(times[0]);
   };
+
+  if (loading) return <p className="text-center text-lg text-red-500">Загрузка...</p>;
+  if (error) return <p className="text-center text-lg text-red-500">Ошибка: {error}</p>;
 
   return (
     <>

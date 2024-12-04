@@ -10,13 +10,17 @@ import { fetchContacts } from '../GlobalRedux/Features/contacts/contactsSlice';
 
 const FooterComponent = () => {
   const dispatch = useDispatch();
-  const { address, phoneNumber, mail, scheduleStart, scheduleEnd, everyday } = useSelector(
+  const { address, phoneNumber, mail, scheduleStart, scheduleEnd, everyday, loading, error } = useSelector(
     (state) => state.contacts
   );
 
   useEffect(() => {
     dispatch(fetchContacts());
   }, [dispatch]);
+  
+  if (loading) return <p className="text-center text-lg text-red-500">Загрузка...</p>;
+  if (error) return <p className="text-center text-lg text-red-500">Ошибка: {error}</p>;
+  
   return (
     <div className='w-full bg-tahiti px-8 pt-8 pb-4 mt-8 flex flex-col flex-wrap items-start justify-center rounded-tl-2xl rounded-tr-2xl'>
       <div className='flex'>

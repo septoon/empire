@@ -1,9 +1,0 @@
-.button {
-  width: 100%;
-  padding: 0.5rem 0;
-  font-size: 1.25rem;
-  font-weight: bold;
-  background-color: var(--mantine-color-tahiti);
-  color: white;
-  border-radius: 0.5rem;
-}

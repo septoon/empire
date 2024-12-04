@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export const fetchAvailableTimes = createAsyncThunk('availableTimes/fetch', async () => {
   const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/availableTimes.json`);
-  return response.data.availableTimes;
+  return response.data.data;
 });
 
 const availableTimesSlice = createSlice({
