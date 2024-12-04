@@ -98,7 +98,7 @@ const SendOrder = ({ selectedTime }) => {
       return;
     }
   
-    const startDateTime = `${currentYear}-${dateTime}${selectedTime}`;
+    const startDateTime = `${currentYear}-${dateTime}${selectedTime}:00`;
   
     const newReservation = {
       id: Date.now().toString(), // Уникальный идентификатор

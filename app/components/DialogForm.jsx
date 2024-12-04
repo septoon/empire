@@ -51,7 +51,7 @@ const DialogForm = () => {
   
     // Формируем строку для выбранного времени
     const selectedDateTimeString = `${currentYear}-${dateTime}${time.toString().padStart(2, '0')}:00`.trim();
-  
+    console.log(selectedDateTimeString)
     // Проверяем совпадение строк с забронированными датами
     const isReserved = reservedDates.some((reservation) => reservation.startDate === selectedDateTimeString);
   
@@ -117,7 +117,7 @@ const DialogForm = () => {
           {times.map((timeObj) => (
         <Button
           key={timeObj.time}
-          variant={selectedTime === timeObj.time ? 'light' : isDateTimeReserved(timeObj.time) ? 'outline' : 'filled'}
+          variant={selectedTime === timeObj.time ? 'light' : isDateTimeReserved((`${timeObj.time}:00`)) ? 'outline' : 'filled'}
           color={isDateTimeReserved(timeObj.time) ? 'red' : 'blue'}
           onClick={() => setSelectedTime(timeObj.time)}
           disabled={isDateTimeReserved(timeObj.time)}
