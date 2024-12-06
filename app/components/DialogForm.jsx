@@ -22,6 +22,7 @@ const DialogForm = () => {
   const isModalOpen = useSelector((state) => state.modal.isOpen);
   const { name, phone, dateTime, comment } = useSelector((state) => state.form);
   const { reservedDates } = useSelector((state) => state.reservations)
+  const { everyday } = useSelector((state) => state.contacts)
   const { times, loading, error } = useSelector((state) => state.availableTimes)
 
   const [selectedTime, setSelectedTime] = useState(null);
@@ -32,9 +33,9 @@ const DialogForm = () => {
   }, [dispatch]);
 
   const handleOpen = () => {
-    const today = dayjs().format('MM-DDT'); // Текущая дата в формате MM-DDT
-    dispatch(setDateTime(today));          // Установите текущую дату
-    setSelectedTime(times[0]);             // Установите первое доступное время
+    const today = dayjs().format('MM-DDT'); 
+    dispatch(setDateTime(today)); 
+    setSelectedTime(times[0]);
     dispatch(openModal());
   };
   const handleClose = () => {
@@ -51,7 +52,7 @@ const DialogForm = () => {
   
     // Формируем строку для выбранного времени
     const selectedDateTimeString = `${currentYear}-${dateTime}${time.toString().padStart(2, '0')}:00`.trim();
-    console.log(selectedDateTimeString)
+
     // Проверяем совпадение строк с забронированными датами
     const isReserved = reservedDates.some((reservation) => reservation.startDate === selectedDateTimeString);
   
@@ -109,6 +110,7 @@ const DialogForm = () => {
             value={isValidDateTime ? dayjs(`${currentYear}-${dateTime}`, 'YYYY-MM-DD').toDate() : null}
             onChange={(e) => handleDateChange(e)}
             locale="ru"
+            excludeDate={(date) => !everyday && (date.getDay() === 0 || date.getDay() === 6)}
             label="Дата"
             minDate={new Date()}
             placeholder="Выберите дату"

@@ -21,51 +21,10 @@ import { fetchReservations } from '../GlobalRedux/Features/modal/reservationsSli
 const SendOrder = ({ selectedTime }) => {
   const { name, phone, dateTime, comment } = useSelector((state) => state.form);
   const selectedServices = useSelector((state) => state.selectedServices.selectedServices);
-  const nodes = useSelector(selectNodes);
   const [isLoadingBtn, setIsLoadingBtn] = useState(false);
   const dispatch = useDispatch();
 
   const currentYear = dayjs().year();
-
-  // Рассчитываем общую длительность выбранных услуг
-  const totalDuration = useMemo(() => {
-    let duration = 0;
-    selectedServices.forEach((serviceName) => {
-      const service = nodes.find((node) => node.name === serviceName);
-      if (service) {
-        duration += service.duration || 0;
-      }
-    });
-    return duration; // длительность в минутах
-  }, [selectedServices, nodes]);
-
-  // Рассчитываем время окончания бронирования
-  const endDateTime = useMemo(() => {
-    if (dateTime) {
-      const dateWithYear = `${currentYear}-${dateTime}`;
-      let end = dayjs(dateWithYear, 'YYYY-MM-DDTHH:mm');
-
-      if (totalDuration > 0) {
-        end = end.add(totalDuration, 'minute');
-      } else {
-        // Если длительность 0, добавляем минимальную длительность (например, 1 минута)
-        end = end.add(1, 'minute');
-      }
-
-      return end.format('YYYY-MM-DDTHH:mm');
-    }
-    return null;
-  }, [dateTime, totalDuration, currentYear]);
-
-  // Функция для проверки пересечения интервалов
-  const hasOverlap = (start1, end1, start2, end2) => {
-    const s1 = dayjs(start1, 'YYYY-MM-DDTHH:mm');
-    const e1 = dayjs(end1, 'YYYY-MM-DDTHH:mm');
-    const s2 = dayjs(start2, 'YYYY-MM-DDTHH:mm');
-    const e2 = dayjs(end2, 'YYYY-MM-DDTHH:mm');
-
-    return s1.isBefore(e2) && e1.isAfter(s2);
-  };
 
   // Обновленное условие валидности формы
   const isFormValid = useMemo(() => {
@@ -101,22 +60,15 @@ const SendOrder = ({ selectedTime }) => {
     const startDateTime = `${currentYear}-${dateTime}${selectedTime}:00`;
   
     const newReservation = {
-      id: Date.now().toString(), // Уникальный идентификатор
-      startDate: startDateTime, // Время начала
+      id: Date.now().toString(),
+      startDate: startDateTime,
     };
   
     try {
-      // Шаг 1: Получаем текущие бронирования
-      const response = await axios.get('https://api.imperia-siyaniya.ru/reservations.json');
-      const currentReservations = Array.isArray(response.data) ? response.data : [];
-  
-      // Шаг 2: Добавляем новую запись
-      const updatedReservations = [...currentReservations, newReservation];
-  
-      // Шаг 3: Отправляем обновленный массив обратно на сервер
-      await axios.put(
-        'https://api.imperia-siyaniya.ru/api/save/reservations.json',
-        updatedReservations,
+      // Отправляем новую запись на сервер
+      await axios.post(
+        'https://api.imperia-siyaniya.ru/api/reservations',
+        newReservation,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -124,7 +76,7 @@ const SendOrder = ({ selectedTime }) => {
         }
       );
   
-      // Шаг 4: Отправляем сообщение в Telegram
+      // Отправляем сообщение в Telegram
       await sendOrder(dateTime, selectedTime, dayjs, currentYear, phone, name, selectedServices, comment);
   
       // Показываем уведомление об успехе
@@ -139,9 +91,9 @@ const SendOrder = ({ selectedTime }) => {
       // Очищаем форму и закрываем модальное окно
       onClickClearOrder();
       setIsLoadingBtn(false);
-      dispatch(fetchReservations())
+      dispatch(fetchReservations());
     } catch (error) {
-      console.error('Ошибка при обновлении данных бронирования:', error);
+      console.error('Ошибка при добавлении бронирования:', error);
       notifications.show({
         title: 'Ошибка',
         message: 'Не удалось записаться. Пожалуйста, попробуйте позже.',
