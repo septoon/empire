@@ -45,8 +45,8 @@
 ### 1️⃣ Клонирование репозитория
 
 ```bash
-git clone https://github.com/septoon/empire-salon.git
-cd empire-salon
+git clone https://github.com/septoon/empire.git
+cd empire
 ```
 
 ### 2️⃣ Установка зависимостей
