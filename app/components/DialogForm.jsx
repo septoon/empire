@@ -14,6 +14,8 @@ import { setComment, setDateTime, setName, setPhone } from '../GlobalRedux/Featu
 import dayjs from 'dayjs';
 import { fetchReservations } from '../GlobalRedux/Features/modal/reservationsSlice';
 import { fetchAvailableTimes } from '../GlobalRedux/Features/modal/availableTimesSlice';
+import { fetchBookingBlackouts } from '../GlobalRedux/Features/modal/bookingBlackoutsSlice';
+import { notifications } from '@mantine/notifications';
 
 dayjs.locale('ru');
 
@@ -24,13 +26,33 @@ const DialogForm = () => {
   const { reservedDates } = useSelector((state) => state.reservations)
   const { everyday } = useSelector((state) => state.contacts)
   const { times, loading, error } = useSelector((state) => state.availableTimes)
+  const { dates: blackoutDates, loading: blackoutsLoading } = useSelector((s) => s.bookingBlackouts)
 
   const [selectedTime, setSelectedTime] = useState(null);
   
   useEffect(() => {
     dispatch(fetchReservations())
     dispatch(fetchAvailableTimes())
+    dispatch(fetchBookingBlackouts())
   }, [dispatch]);
+
+  useEffect(() => {
+    if (blackoutsLoading) return;
+    if (!dateTime) return;
+
+    const ymd = dayjs(`${dayjs().year()}-${dateTime?.replace('T', '')}`).format('YYYY-MM-DD');
+    if (!ymd || ymd === 'Invalid Date') return;
+
+    if (blackoutDates.includes(ymd)) {
+      notifications.show({
+        title: 'Запись закрыта',
+        message: 'На выбранную дату запись закрыта. Выберите другую дату.',
+        color: 'red',
+        position: 'bottom-center',
+      });
+      dispatch(setDateTime(null));
+    }
+  }, [blackoutsLoading, blackoutDates, dateTime, dispatch]);
 
   const handleOpen = () => {
     const today = dayjs().format('MM-DDT'); 
@@ -110,7 +132,12 @@ const DialogForm = () => {
             value={isValidDateTime ? dayjs(`${currentYear}-${dateTime}`, 'YYYY-MM-DD').toDate() : null}
             onChange={(e) => handleDateChange(e)}
             locale="ru"
-            excludeDate={(date) => !everyday && (date.getDay() === 0 || date.getDay() === 6)}
+            excludeDate={(date) => {
+              const isWeekend = !everyday && (date.getDay() === 0 || date.getDay() === 6);
+              const ymd = dayjs(date).format('YYYY-MM-DD');
+              const isBlackout = blackoutDates.includes(ymd);
+              return isWeekend || isBlackout;
+            }}
             label="Дата"
             minDate={new Date()}
             placeholder="Выберите дату"

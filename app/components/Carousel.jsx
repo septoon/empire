@@ -12,7 +12,7 @@ const Carousel = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get('https://api.imperia-siyaniya.ru/posts.json');
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/posts.json`);
         const data = response.data;
 
         if (Array.isArray(data)) {

@@ -21,6 +21,7 @@ import { fetchReservations } from '../GlobalRedux/Features/modal/reservationsSli
 const SendOrder = ({ selectedTime }) => {
   const { name, phone, dateTime, comment } = useSelector((state) => state.form);
   const selectedServices = useSelector((state) => state.selectedServices.selectedServices);
+  const { dates: blackoutDates, loading: blackoutsLoading } = useSelector((s) => s.bookingBlackouts);
   const [isLoadingBtn, setIsLoadingBtn] = useState(false);
   const dispatch = useDispatch();
 
@@ -39,9 +40,43 @@ const SendOrder = ({ selectedTime }) => {
 
   const sendReservation = async () => {
     setIsLoadingBtn(true);
+
+    if (blackoutsLoading) {
+      notifications.show({
+        title: 'Подождите',
+        message: 'Загружаем ограничения по датам. Попробуйте еще раз через секунду.',
+        color: 'yellow',
+        position: 'bottom-center',
+      });
+      setIsLoadingBtn(false);
+      return;
+    }
   
     if (!dateTime) {
       console.error('Дата и время не указаны!');
+      setIsLoadingBtn(false);
+      return;
+    }
+
+    const ymd = dayjs(`${dayjs().year()}-${dateTime?.replace('T', '')}`).format('YYYY-MM-DD');
+    if (!ymd || ymd === 'Invalid Date') {
+      notifications.show({
+        title: 'Ошибка',
+        message: 'Некорректная дата. Пожалуйста, выберите дату заново.',
+        color: 'red',
+        position: 'bottom-center',
+      });
+      setIsLoadingBtn(false);
+      return;
+    }
+
+    if (blackoutDates.includes(ymd)) {
+      notifications.show({
+        title: 'Запись закрыта',
+        message: 'На выбранную дату запись закрыта',
+        color: 'red',
+        position: 'bottom-center',
+      });
       setIsLoadingBtn(false);
       return;
     }
@@ -109,7 +144,7 @@ const SendOrder = ({ selectedTime }) => {
       <Button
         variant="filled"
         onClick={sendReservation}
-        disabled={!isFormValid || !selectedTime}
+        disabled={!isFormValid || !selectedTime || blackoutsLoading}
         loading={isLoadingBtn}
         fullWidth
       >

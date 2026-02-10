@@ -38,9 +38,6 @@ const SelectServices = () => {
           fontSize: '16px',
         },
       }}
-      inputProps={{
-        readOnly: true,
-      }}
     />
   );
 };
