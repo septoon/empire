@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // Асинхронный thunk для получения данных
 export const fetchContacts = createAsyncThunk('contacts/fetch', async () => {
-  const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/contacts.json`);
+  const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/contacts.json?t=${Date.now()}`);
   return response.data || {};
 });
 

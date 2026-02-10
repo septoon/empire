@@ -117,17 +117,17 @@ const DialogForm = () => {
           />
           <Group align="center" justify="center" spacing="xs" mt="md">
           {times.map((timeObj) => (
-        <Button
-          key={timeObj.time}
-          variant={selectedTime === timeObj.time ? 'light' : isDateTimeReserved((`${timeObj.time}:00`)) ? 'outline' : 'filled'}
-          color={isDateTimeReserved(timeObj.time) ? 'red' : 'blue'}
-          onClick={() => setSelectedTime(timeObj.time)}
-          disabled={isDateTimeReserved(timeObj.time)}
-          size="sm"
-        >
-          {timeObj.time}:00
-        </Button>
-      ))}
+            <Button
+              key={timeObj.time}
+              variant={selectedTime === timeObj.time ? 'light' : isDateTimeReserved((`${timeObj.time}:00`)) ? 'outline' : 'filled'}
+              color={isDateTimeReserved(timeObj.time) ? 'red' : 'blue'}
+              onClick={() => setSelectedTime(timeObj.time)}
+              disabled={isDateTimeReserved(timeObj.time)}
+              size="sm"
+            >
+              {timeObj.time}:00
+            </Button>
+          ))}
           </Group>
           </div>
           <Textarea

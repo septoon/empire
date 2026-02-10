@@ -2,8 +2,8 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 export const fetchAvailableTimes = createAsyncThunk('availableTimes/fetch', async () => {
-  const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/availableTimes.json`);
-  return response.data.data;
+  const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/availableTimes.json?t=${Date.now()}`);
+  return response.data;
 });
 
 const availableTimesSlice = createSlice({

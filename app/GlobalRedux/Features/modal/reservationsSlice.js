@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 export const fetchReservations = createAsyncThunk('reservations/fetch', async () => {
-  const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/reservations.json`);
+  const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/reservations.json?t=${Date.now()}`);
   return response.data || [];
 });
 

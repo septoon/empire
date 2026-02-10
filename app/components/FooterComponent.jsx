@@ -41,7 +41,13 @@ const FooterComponent = () => {
         <p className='ml-1'>График работы:</p>
       </div>
       <p className='font-bold'>{everyday ? 'Ежедневно' : 'Пн-Пт'} с {scheduleStart}:00 - {scheduleEnd}:00</p>
-      <p className='self-center mt-8'>© 2023 Империя сияния</p>
+      <div className='self-center mt-8 flex flex-col items-center'>
+        <p>© 2023 Империя сияния</p>
+        <div className='flex items-center'>
+        <p className='text-sm mr-2'>Разработано студией </p> 
+        <a href="https://lumastack.ru" target="_blank" rel="noopener noreferrer" className='text-sm underline'>LumaStack</a>
+        </div>
+      </div>
     </div>
   )
 }
