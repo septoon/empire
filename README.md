@@ -58,7 +58,7 @@ npm install
 Создайте файл .env.local в корне проекта и добавьте переменные окружения, необходимые для работы приложения. Пример:
 ```bash
 NEXT_PUBLIC_API_URL=https://api.example.ru
-```
+
 ### 3️⃣ Режим разработки
 ```bash
 npm run dev

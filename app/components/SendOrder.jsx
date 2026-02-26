@@ -17,15 +17,50 @@ import { selectNodes } from '../GlobalRedux/Selectors/servicesSelectors';
 import { Button } from '@mantine/core';
 import { sendOrder } from '../common/sendOrder';
 import { fetchReservations } from '../GlobalRedux/Features/modal/reservationsSlice';
+import { trackPurchase } from '../common/ecommerceTracking';
 
 const SendOrder = ({ selectedTime }) => {
   const { name, phone, dateTime, comment } = useSelector((state) => state.form);
   const selectedServices = useSelector((state) => state.selectedServices.selectedServices);
+  const serviceNodes = useSelector(selectNodes);
   const { dates: blackoutDates, loading: blackoutsLoading } = useSelector((s) => s.bookingBlackouts);
   const [isLoadingBtn, setIsLoadingBtn] = useState(false);
   const dispatch = useDispatch();
 
   const currentYear = dayjs().year();
+  const servicesByName = useMemo(() => {
+    const map = new Map();
+    serviceNodes.forEach((service) => {
+      if (!service?.name) return;
+      map.set(service.name, service);
+    });
+    return map;
+  }, [serviceNodes]);
+
+  const purchaseProducts = useMemo(() => {
+    return selectedServices
+      .map((serviceName, index) => {
+        const serviceData = servicesByName.get(serviceName);
+        if (!serviceData) {
+          return { id: serviceName, name: serviceName, price: 0, quantity: 1, position: index + 1 };
+        }
+
+        return {
+          ...serviceData,
+          quantity: 1,
+          position: index + 1,
+          list: serviceData.list || 'booking_modal_services',
+        };
+      })
+      .filter(Boolean);
+  }, [selectedServices, servicesByName]);
+
+  const purchaseRevenue = useMemo(() => {
+    return purchaseProducts.reduce((sum, product) => {
+      const numericPrice = Number(product.price);
+      return Number.isFinite(numericPrice) ? sum + numericPrice * (product.quantity || 1) : sum;
+    }, 0);
+  }, [purchaseProducts]);
 
   // Обновленное условие валидности формы
   const isFormValid = useMemo(() => {
@@ -39,6 +74,8 @@ const SendOrder = ({ selectedTime }) => {
   };
 
   const sendReservation = async () => {
+    if (isLoadingBtn) return;
+
     setIsLoadingBtn(true);
 
     if (blackoutsLoading) {
@@ -101,7 +138,7 @@ const SendOrder = ({ selectedTime }) => {
   
     try {
       // Отправляем новую запись на сервер
-      await axios.post(
+      const reservationResponse = await axios.post(
         'https://api.imperia-siyaniya.ru/api/reservations',
         newReservation,
         {
@@ -110,6 +147,20 @@ const SendOrder = ({ selectedTime }) => {
           },
         }
       );
+
+      const orderIdFromApi =
+        reservationResponse?.data?.id ||
+        reservationResponse?.data?.reservationId ||
+        reservationResponse?.data?.orderId ||
+        newReservation.id;
+
+      trackPurchase({
+        orderId: String(orderIdFromApi),
+        products: purchaseProducts,
+        revenue: purchaseRevenue,
+        affiliation: 'imperia-siyaniya.ru',
+        list: 'booking_modal_services',
+      });
   
       // Отправляем сообщение в Telegram
       await sendOrder(dateTime, selectedTime, dayjs, currentYear, phone, name, selectedServices, comment);

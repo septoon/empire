@@ -1,4 +1,6 @@
 import { Providers } from "./GlobalRedux/provider";
+import YandexMetrika from "./components/YandexMetrika";
+import { getRequiredMetrikaCounterId } from "./common/metrikaConfig";
 
 import "./globals.css";
 import '@mantine/core/styles.css';
@@ -6,6 +8,8 @@ import '@mantine/dates/styles.css';
 import { MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import '@mantine/notifications/styles.css';
+
+const metrikaCounterId = getRequiredMetrikaCounterId();
 
 export const metadata = {
   title: "Империя сияния",
@@ -53,6 +57,7 @@ export default function RootLayout({ children }) {
       <body
         className='w-full box-border antialiased bg-gradient-to-r from-mainBgStart  via-mainBgMiddle to-mainBg'
       >
+        <YandexMetrika counterId={metrikaCounterId} />
         <Providers>
         <MantineProvider>
           <Notifications />

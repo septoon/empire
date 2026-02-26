@@ -2,16 +2,46 @@
 
 import { useDispatch, useSelector } from "react-redux";
 import { fetchServices } from "../GlobalRedux/Features/services/servicesSlice";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import Loader from "./Preloader/Loader";
+import { trackImpressions } from "../common/ecommerceTracking";
 
 const Services = () => {
   const dispatch = useDispatch();
   const { data, loading, error } = useSelector((state) => state.services);
+  const sentImpressions = useRef(new Set());
 
   useEffect(() => {
     dispatch(fetchServices());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (!Array.isArray(data) || !data.length) return;
+
+    data.forEach((category) => {
+      const listName = category.category || "Услуги";
+      const products = (category.items || []).map((item, index) => ({
+        ...item,
+        category: listName,
+        list: listName,
+        position: index + 1,
+        quantity: 1,
+      }));
+
+      if (!products.length) return;
+
+      const signature = `${listName}:${products
+        .map((item) => item.id ?? item.name ?? "")
+        .join("|")}`;
+
+      if (sentImpressions.current.has(signature)) return;
+
+      const pushed = trackImpressions(products, { list: listName });
+      if (pushed) {
+        sentImpressions.current.add(signature);
+      }
+    });
+  }, [data]);
 
   if (loading) return <Loader/>;
   if (error) return <p className="text-center text-lg text-red-500">Ошибка: {error}</p>;
@@ -31,7 +61,7 @@ const Services = () => {
                 </tr>
               </thead>
               <tbody className="bg-dark">
-                {category.items.map((item, index) => (
+                {category.items.map((item) => (
                   <tr key={item.name} className='bg-darkAdmin text-silverAdmin'>
                     <td className="p-3 text-left">{item.name}</td>
                     <td className="p-3 text-right">{item.price}₽</td>
